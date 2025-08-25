@@ -2,20 +2,26 @@ import random
 import string
 from datetime import datetime
 
-quantity = 100   # KAÇ ADET KOD ÜRETİLECEK
-length = 11      # KOD UZUNLUĞU
+quantity = 100   # How many codes will be generated
+length = 11      # Length of each code
 
 def gen_ran_code(length: int) -> str:
     chars = string.ascii_letters + string.digits
     return ''.join(random.choice(chars) for _ in range(length))
 
-# Dosya adı: 25-08-2025_20-45_random-code.txt
+# File name format: 10-05-2021_12-00_random-code.txt
 timestamp = datetime.now().strftime("%d-%m-%Y_%H-%M")
 filename = f"{timestamp}_random-code.txt"
 
-with open(filename, "w", encoding="utf-8") as f:
-    for _ in range(quantity):
-        code = gen_ran_code(length)
-        f.write(code + "\n")
+codes = set()
+while len(codes) < quantity:
+    codes.add(gen_ran_code(length))
 
-print(f"{quantity} adet kod üretildi ve '{filename}' dosyasına yazıldı.")
+# Calculate zero-padding length based on total quantity
+pad_len = len(str(quantity))
+
+with open(filename, "w", encoding="utf-8") as f:
+    for idx, code in enumerate(codes, start=1):
+        f.write(f"{str(idx).zfill(pad_len)}-{code}\n")
+
+print(f"{len(codes)} adet benzersiz kod üretildi ve '{filename}' dosyasına yazıldı.")
